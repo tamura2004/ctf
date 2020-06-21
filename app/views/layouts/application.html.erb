@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,17 +11,23 @@
   <%= javascript_pack_tag "application" %>
   <%= stylesheet_pack_tag "theme" %>
   <link rel="shortcut icon" href="<%= favicon_path %>">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
+
 <body>
-<section class="starter">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-9 content-body">
-        <% if @title %><h1><%= @title %></h1><% end %>
-        <%= yield %>
+  <nav class="navbar navbar-dark fixed-top bg-dark">
+    <a href="/" class="navbar-brand">Home</a>
+  </nav>
+  <section class="starter">
+    <div class="container">
+      <div class="jumbotron">
+        <h1 class="display-4"><%= @title %></h1>
+        <p class="lead">ヒント：<%= @hint %></p>
       </div>
+      <%= yield %>
     </div>
-  </div>
-</section>
+  </section>
 </body>
+
 </html>
