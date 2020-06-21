@@ -5,7 +5,10 @@ class Md5Controller < ApplicationController
   end
 
   def show
-    @hash = Digest::MD5.hexdigest(params[:key])
+    @title = "ハッシュ変換"
+    @hint = "MD5関数"
+    @key = params[:key]
+    @hash = Digest::MD5.hexdigest(@key)
     render "md5/show"
   end
 end
