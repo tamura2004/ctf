@@ -93,7 +93,7 @@ class FlagsController < ApplicationController
   end
 
   def getTheFlag()
-    32.times.map{ (_1 * 23 % 26 + 97).chr }.join
+    32.times.map{ |v|  (v * 23 % 26 + 97).chr }.join
   end
   
   def getFlag009()
