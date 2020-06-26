@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>terminal.js test</title>
+	<script src="lib/terminal.js"></script>
+</head>
+
+<body>
+	<h1>terminal.js test</h1>
+
+	<script>
+		const t1 = new Terminal();
+		t1.setHeight("400px");
+		t1.setWidth("800px");
+		document.body.appendChild(t1.html);
+		const files = {
+			"/": {},
+			"/etc": {},
+			"/var": {},
+			"/var/log": {},
+			"/var/log/messages": { "body": ["one", "two", "three"] },
+			"/etc/password": { "body": ["# Don't look me!", "Flag{e1a2eag2ag2ag22h2d22hg}"] },
+		};
+
+		const man = {
+			"cat": { usage: "cat [FILE]", description: "Print file content." },
+			"cd": { usage: "cd [PATH]", description: "Change current directory." },
+			"cp": { usage: "cp [SOURCE] [DEST]", description: "Copy file or directory from source to dest." },
+			"ls": { usage: "ls [no option]", description: "List files of current directory." },
+			"man": { usage: "man [CMD]", description: "Print command usage." },
+			"mv": { usage: "mv [SOURCE] [DEST]", description: "Move file or directory from source to dest." },
+			"pwd": { usage: "pwd [no option]", description: "Print currenct working directory." },
+			"rm": { usage: "rm [PATH]", description: "Remove file or directory." },
+		};
+
+		let pwd = "/";
+		let host = "localhost";
+		let user = "root";
+		const lines = [`Hello ${user} from ${host}`, "　"];
+
+		const baseName = function (path) {
+			return path.split("/").pop();
+		}
+
+		const dirName = function (path) {
+			return path.split("/").slice(0,-1).join("/") || "/";
+		}
+
+		const absoluteName = function (path) {
+			if (!path) return null;
+			if (path === "..") return dirName(pwd);
+			if (path.charAt() === "/") return path;
+			if (pwd == "/") return pwd + path;
+			return pwd + "/" + path;
+		}
+
+		const isFile = function(path) {
+			return files[path] && files[path]["body"];
+		}
+
+		const isDir = function(path) {
+			return !isFile(path);
+		}
+
+		const repl = function () {
+			t1.clear();
+			while (lines.length > 20) lines.shift();
+			for (let i = 0; i < lines.length; i++) {
+				t1.print(lines[i]);
+			}
+			t1.input("", function (input) {
+				lines.push(input);
+
+				let args = input.split(" ");
+				let cmd = args[1] || "help";
+				let path = absoluteName(args[2]);
+				let dest = absoluteName(args[3]);
+
+				switch (cmd) {
+					case "help":
+						for (const key in man) {
+							lines.push(`${key}: ${man[key]["description"]}`);
+						}
+						break;
+
+					case "man":
+						const ref = man[args[2]];
+						if (ref) {
+							lines.push(ref["usage"]);
+							lines.push(ref["description"]);
+						} else {
+							lines.push(`No such command: ${args[2]}`);
+						}
+						break;
+
+					case "cd":
+						if (isDir(path)) {
+							pwd = path;
+							lines.push(path);
+						} else {
+							lines.push(`${path}: No such directory`);
+						}
+						break;
+
+					case "rm":
+						if (files[path]) {
+							delete files[path];
+							lines.push(`${path} was removed`);
+						} else {
+							lines.push(`${path}: No such file or directory`);
+						}
+						break;
+
+					case "cp":
+						if (files[path]) {
+							files[dest] = files[path];
+							lines.push(`${dest} was copyed from ${path}`);
+						} else {
+							lines.push(`${path}: No such file or directory`);
+						}
+						break;
+
+					case "mv":
+						if (files[path]) {
+							files[dest] = files[path];
+							delete files[path];
+							lines.push(`${dest} was moved from ${path}`);
+						} else {
+							lines.push(`${path}: No such file or directory`);
+						}
+						break;
+
+					case "pwd":
+						lines.push(pwd);
+						break;
+
+					case "ls":
+						let count = 0;
+						for (const key in files) {
+							if (pwd === dirName(key)) {
+								lines.push(key);
+								count++;
+							}
+						}
+						lines.push(`total ${count}`);
+						break;
+
+					case "cat":
+						if (files[path] && files[path]["body"]) {
+							for (const line of files[path]["body"]) {
+								lines.push(line);
+							}
+						} else {
+							lines.push(`${path}: No such file or directory`)
+						}
+						break;
+
+					default:
+						lines.push(`Command '${cmd}' not found`);
+				}
+				lines.push("　");
+				repl();
+			});
+		};
+		repl();
+	</script>
+
+</body>
+
+</html>

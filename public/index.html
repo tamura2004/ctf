@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/xterm.css">
+  <script src="lib/xterm.js"></script>
 </head>
 
 <body>
@@ -26,6 +28,14 @@
       </p>
     </div>
     <a href="/dev/flags" type="button" class="btn btn-primary btn-lg">フラッグを探しに行く</a>
+    <div id="terminal"></div>
+    <script>
+      var term = new Terminal();
+      term.open(document.getElementById('terminal'));
+      term.writeln("Ubuntu 18.04.1 LTS ubuntu tty1");
+      term.writeln("");
+      term.writeln("$ ");
+    </script>
   </div>
 </body>
 </html>
